@@ -1,0 +1,37 @@
+<html lang="en-US">
+    <head>
+        <title>Graph drawing app</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <script type="text/javascript" src="{{ url_for('static', filename='get_window_size.js') }}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='drawing.js') }}"></script>
+        <script>
+            function drawGraphs() {
+                var graphs = JSON.parse('{{ res_graphs | tojson | safe }}');
+                var ct = '{{ ct }}';
+
+                for (var i = 0; i < parseInt(ct, 10); i++) {
+                    var idx = (i).toString();
+                    var div = document.createElement('div');
+                    if (graphs[idx]["status"] == "OK") {
+                        div.className = "canvasChild";
+                        var canvas = document.createElement("canvas");
+                        let cx = canvas.getContext("2d");
+                        drawNodes(cx, graphs[idx]["graph_dict"]);
+                        drawEdges(cx, graphs[idx]["graph_dict"]);
+                        div.appendChild(canvas);
+                        document.getElementsByClassName('wrapper')[0].appendChild(div);
+                    }
+                    /*
+                    else {
+                        div.className = "errorBlock";
+                        var text = document.createElement("p");
+                        text.innerHTML.text = graphs[idx]["status"];
+                    }*/
+                }
+            }
+        </script>
+    </head>
+    <body onload="drawGraphs()">
+        <div class="wrapper"></div>
+    </body>
+</html>
