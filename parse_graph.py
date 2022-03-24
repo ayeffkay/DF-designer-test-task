@@ -9,7 +9,7 @@ class NodeTransformer(ast.NodeTransformer):
         self.parsing_errors = []
         self.is_valid_now = True
     
-    def is_valid(self) -> bool:
+    def is_valid(self) -> str:
         # each name initialized with Node() assignment will be in self.neighbors.keys()
         nodes = set(itertools.chain.from_iterable(self.neighbors.values()))
         for node in nodes:
