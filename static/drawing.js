@@ -1,28 +1,18 @@
-function drawNodes(cx, graph_dict) {
-    for (var j = 0; j < graph_dict["nodes"].length; j++) {
-        var node = graph_dict["nodes"][j];
-        cx.beginPath();
-        cx.arc(parseInt(node["x"], 10), parseInt(node["y"], 10), 2, 0, 2 * Math.PI);
-        cx.stroke();
-
-        cx.font = "10px Arial";
-        cx.fillText(node["title"], node["x"] + 5, node["y"] + 5);
-    }
+function writeText(cx, text, x, y) {
+    cx.font = "10px Arial";
+    cx.fillText(text, x, y);
 }
 
-function drawEdges(cx, graph_dict) {
-    for (var j = 0; j < graph_dict["edges"].length; j++) {
-        var edge = graph_dict["edges"][j];
-        var src_idx = parseInt(edge["src"], 10);
-        var trg_idx = parseInt(edge["trg"], 10);
+function drawNode(cx, node, r, d) {
+    cx.beginPath();
+    var x = node["x"];
+    var y = node["y"];
+    var title = node["title"];
 
-        var fromx = parseInt(graph_dict["nodes"][src_idx]["x"], 10);
-        var fromy = parseInt(graph_dict["nodes"][src_idx]["y"], 10);
+    cx.arc(x, y, r, 0, 2 * Math.PI);
+    cx.stroke();
 
-        var tox = parseInt(graph_dict["nodes"][trg_idx]["x"], 10);
-        var toy = parseInt(graph_dict["nodes"][trg_idx]["y"], 10);
-        drawArrow(cx, fromx, fromy, tox, toy);
-    }
+    writeText(cx, title, x + r + d, y + r + d);
 }
 
 function drawArrow(cx, x1, y1, x2, y2) {
@@ -37,4 +27,16 @@ function drawArrow(cx, x1, y1, x2, y2) {
     cx.moveTo(x2, y2);
     cx.lineTo(x2 - headlen * Math.cos(angle + Math.PI / 6), y2 - headlen * Math.sin(angle + Math.PI / 6));
     cx.stroke();
+}
+
+function drawEdge(cx, edge, nodes, d) {
+    var src_idx = edge["src"];
+    var trg_idx = edge["trg"];
+
+    var x1 = nodes[src_idx]["x"];
+    var y1 = nodes[src_idx]["y"];
+
+    var x2 = nodes[trg_idx]["x"];
+    var y2 = nodes[trg_idx]["y"];
+    drawArrow(cx, x1, y1, x2 + d, y2 + d);
 }

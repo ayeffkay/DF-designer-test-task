@@ -2,31 +2,41 @@
     <head>
         <title>Graph drawing app</title>
         <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-        <script type="text/javascript" src="{{ url_for('static', filename='get_window_size.js') }}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='drawing.js') }}"></script>
+        <script src="{{url_for('static', filename='drawing.js')}}"></script>
         <script>
             function drawGraphs() {
                 var graphs = JSON.parse('{{ res_graphs | tojson | safe }}');
                 var ct = '{{ ct }}';
-
-                for (var i = 0; i < parseInt(ct, 10); i++) {
-                    var idx = (i).toString();
+                for (var idx in graphs) {
+                    //document.writeln(JSON.stringify(graphs[idx]));
                     var div = document.createElement('div');
-                    if (graphs[idx]["status"] == "OK") {
-                        div.className = "canvasChild";
-                        var canvas = document.createElement("canvas");
-                        let cx = canvas.getContext("2d");
-                        drawNodes(cx, graphs[idx]["graph_dict"]);
-                        drawEdges(cx, graphs[idx]["graph_dict"]);
-                        div.appendChild(canvas);
-                        document.getElementsByClassName('wrapper')[0].appendChild(div);
+                    div.className = "canvasChild";
+
+                    var canvas = document.createElement("canvas");
+                    var cx = canvas.getContext("2d");
+
+                    div.appendChild(canvas);
+                    document.getElementsByClassName('wrapper')[0].appendChild(div);
+
+                    var status = graphs[idx]["status"];
+                    var circle_r = 5;
+                    var d = 1;
+                    
+                    if (status == "OK") {
+                        var nodes = graphs[idx]["graph_dict"]["nodes"];
+                        for (var i = 0; i < nodes.length; i++) {
+                            var node = nodes[i];
+                            drawNode(cx, node, circle_r, d);
+                        }
+                        var edges = graphs[idx]["graph_dict"]["edges"];
+                        for (var i = 0; i < edges.length; i++) {
+                            var edge = edges[i];
+                            drawEdge(cx, edge, nodes, d);
+                        }
                     }
-                    /*
                     else {
-                        div.className = "errorBlock";
-                        var text = document.createElement("p");
-                        text.innerHTML.text = graphs[idx]["status"];
-                    }*/
+                        writeText(cx, status, 10, 10);
+                    }
                 }
             }
         </script>

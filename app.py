@@ -5,7 +5,6 @@ from flask import Flask, render_template, request
 from parse_graph import NodeTransformer
 from layout import Graph
 import json
-import sys
 import os
 
 WIDTH = 200
@@ -39,7 +38,7 @@ def create_app(folder: str):
             app.logger.info(graph['status'])
             if graph['status'] == 'OK':
                 force_graph = Graph(graph['graph_nodes'], width=WIDTH, height=HEIGHT)
-                force_graph.compute_forces(T=100)
+                force_graph.compute_forces(T=100, l=5)
                 graph_dict= force_graph.get_graph_dict()
                 app.logger.info(json.dumps(graph_dict))
             else:
@@ -48,12 +47,14 @@ def create_app(folder: str):
                                 status=graph['status'])
         return render_template('index.html', res_graphs=res_graphs, ct=len(res_graphs))
 
+    """
     @app.route('/get_window_size', methods=['POST'])
     def get_window_size():
         window_size = request.get_json()
         ct = len(os.listdir(folder))
         WIDTH = window_size['width'] // ct
         HEIGHT = window_size['height'] // ct
+    """
 
     return app
 
